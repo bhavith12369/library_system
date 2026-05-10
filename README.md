@@ -24,8 +24,6 @@ A simple library management website built with Spring Boot, JPA, H2 database, an
 3. Run `mvn spring-boot:run` to start the application.
 4. Access the application at http://localhost:9091
 
-## Login
-
-- Student: username `student`, password `student`
-- Admin: username `admin`, password `admin`
+BHAVITH-4CB22CB014
+AKASH-4CB22CS008
 
