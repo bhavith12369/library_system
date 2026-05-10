@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Access | LuminaLibrary</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+</head>
+<body style="display: flex; flex-direction: column;">
+    <nav>
+        <div class="logo">LuminaLibrary <span style="font-size: 0.8rem; vertical-align: middle; padding: 0.2rem 0.5rem; background: var(--secondary); color: white; border-radius: 4px; margin-left: 0.5rem;">ADMIN</span></div>
+        <ul class="nav-links">
+            <li><a th:href="@{/}">Home</a></li>
+        </ul>
+    </nav>
+
+    <div class="form-container glass animate-fade-in" style="margin-top: 10vh; border-top: 4px solid var(--secondary);">
+        <h2 style="margin-bottom: 0.5rem; text-align: center;">Administrator Portal</h2>
+        <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">Authorized access only</p>
+        
+        <div th:if="${param.error}" style="background: rgba(239, 68, 68, 0.1); color: var(--danger); padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1.5rem; font-size: 0.875rem; text-align: center;">
+            Access Denied. Invalid credentials.
+        </div>
+        
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="username">Admin Username</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="admin" required autofocus>
+            </div>
+            <div class="form-group">
+                <label for="password">Security Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 1rem; background: var(--secondary);">Verify & Enter</button>
+        </form>
+        
+        <div style="margin-top: 2rem; text-align: center; font-size: 0.875rem; color: var(--text-muted);">
+            <p>Looking for the student portal? <a th:href="@{/login}" style="color: var(--primary); text-decoration: none;">Click here</a></p>
+        </div>
+    </div>
+
+    <footer style="margin-top: auto;">
+        <p>&copy; 2024 LuminaLibrary Internal.</p>
+    </footer>
+</body>
+</html>

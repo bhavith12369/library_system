@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Student Account | LuminaLibrary</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+</head>
+<body style="display: flex; flex-direction: column;">
+    <nav>
+        <div class="logo">LuminaLibrary</div>
+        <ul class="nav-links">
+            <li><a th:href="@{/}">Home</a></li>
+            <li><a th:href="@{/login}">Login</a></li>
+        </ul>
+    </nav>
+
+    <div class="form-container glass animate-fade-in" style="margin-top: 5vh;">
+        <h2 style="text-align: center;">Join Lumina</h2>
+        <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">Create your student account to start borrowing books.</p>
+        
+        <form th:action="@{/signup}" th:object="${user}" method="post">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" th:field="*{name}" class="form-control" placeholder="John Doe" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" th:field="*{email}" class="form-control" placeholder="john@university.edu" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Create Password</label>
+                <input type="password" id="password" th:field="*{password}" class="form-control" placeholder="••••••••" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 1rem;">Create Account</button>
+        </form>
+        
+        <div style="margin-top: 1.5rem; text-align: center; font-size: 0.875rem; color: var(--text-muted);">
+            Already have an account? <a th:href="@{/login}" style="color: var(--primary); font-weight: 600; text-decoration: none;">Sign In</a>
+        </div>
+    </div>
+
+    <footer style="margin-top: auto;">
+        <p>&copy; 2024 LuminaLibrary.</p>
+    </footer>
+</body>
+</html>

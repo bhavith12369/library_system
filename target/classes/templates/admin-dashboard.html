@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Admin Command Center | LuminaLibrary</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+</head>
+<body>
+    <nav>
+        <div class="logo">LuminaLibrary <span style="font-size: 0.7rem; background: var(--secondary); color: white; padding: 0.1rem 0.4rem; border-radius: 4px; margin-left: 0.5rem;">ADMIN</span></div>
+        <ul class="nav-links">
+            <li><a th:href="@{/dashboard}">Control Panel</a></li>
+            <li><a th:href="@{/books}">Inventory</a></li>
+            <li><a th:href="@{/users}">Students</a></li>
+            <li><a th:href="@{/issues}">Circulation</a></li>
+            <li>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-outline" style="padding: 0.4rem 1rem; font-size: 0.8rem;">Logout</button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+
+    <div style="padding: 3rem 5%;">
+        <div class="animate-fade-in">
+            <h1>System Administrator, <span sec:authentication="name" style="color: var(--secondary)">User</span></h1>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">Managing the core library infrastructure.</p>
+        </div>
+
+        <div class="grid" style="margin-top: 3rem; padding: 0;">
+            <!-- Admin Controls -->
+            <div class="card glass" style="border-top: 4px solid var(--secondary);">
+                <h3>Management Tools</h3>
+                <p>System-wide actions for administrators.</p>
+                <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <a th:href="@{/books/new}" class="btn btn-primary" style="text-align: center; background: var(--secondary);">Add New Inventory</a>
+                    <a th:href="@{/users/new}" class="btn btn-outline" style="text-align: center;">Register Student</a>
+                    <a th:href="@{/users}" class="btn btn-outline" style="text-align: center;">Database View</a>
+                </div>
+            </div>
+
+            <!-- Circulation -->
+            <div class="card glass">
+                <h3>Global Circulation</h3>
+                <p>Monitor all active book issues across the system.</p>
+                <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <a th:href="@{/issues}" class="btn btn-outline" style="text-align: center;">View All Records</a>
+                    <a th:href="@{/issues/new}" class="btn btn-primary" style="text-align: center;">Manual Issue</a>
+                </div>
+            </div>
+
+            <!-- Global Stats -->
+            <div class="card glass">
+                <h3>System Snapshot</h3>
+                <div style="display: flex; justify-content: space-between; margin-top: 1rem;">
+                    <div>
+                        <p style="font-size: 2rem; font-weight: 800; color: var(--primary);">48</p>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">Total Students</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 2rem; font-weight: 800; color: var(--secondary);">312</p>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">Active Catalog</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 LuminaLibrary Administrator Command Center.</p>
+    </footer>
+</body>
+</html>

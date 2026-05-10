@@ -1,52 +1,93 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>My Issues</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Issue Records | LuminaLibrary</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="/dashboard">Library Management</a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/books">Books</a>
-                <a class="nav-link" href="/issues">My Issues</a>
-                <form th:action="@{/logout}" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-link nav-link">Logout</button>
-                </form>
-            </div>
-        </div>
+    <nav>
+        <div class="logo">LuminaLibrary</div>
+        <ul class="nav-links">
+            <li><a th:href="@{/dashboard}">Dashboard</a></li>
+            <li><a th:href="@{/books}">Books</a></li>
+            <li><a th:href="@{/issues}">Issues</a></li>
+        </ul>
     </nav>
-    <div class="container mt-4">
-        <h1>My Book Issues</h1>
-        <a href="/dashboard" class="btn btn-secondary mb-3">Back to Dashboard</a>
-        <a href="/issues/new" class="btn btn-primary mb-3">Issue New Book</a>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Book</th>
-                    <th>Issue Date</th>
-                    <th>Due Date</th>
-                    <th>Return Date</th>
-                    <th>Fine</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="issue : ${issues}">
-                    <td th:text="${issue.book.title}"></td>
-                    <td th:text="${issue.issueDate}"></td>
-                    <td th:text="${issue.dueDate}"></td>
-                    <td th:text="${issue.returnDate}"></td>
-                    <td th:text="${issue.fine}"></td>
-                    <td>
-                        <form th:if="${issue.returnDate == null}" th:action="@{/issues/{id}/return(id=${issue.id})}" method="post" style="display:inline;">
-                            <button type="submit" class="btn btn-sm btn-success">Return</button>
-                        </form>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+
+    <div style="padding: 3rem 5%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+                <h1>Circulation Records</h1>
+                <p style="color: var(--text-muted);">Track book requests, approvals, and returns.</p>
+            </div>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/issues/new}" class="btn btn-primary" style="background: var(--secondary);">+ Direct Issue</a>
+        </div>
+
+        <div th:if="${param.requested}" style="background: rgba(34, 197, 94, 0.1); color: var(--success); padding: 1rem; border-radius: 0.5rem; margin-bottom: 2rem; text-align: center;">
+            Your request has been submitted to the administrator for approval.
+        </div>
+
+        <div class="table-container glass">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Book Title</th>
+                        <th sec:authorize="hasRole('ADMIN')">Student</th>
+                        <th>Request Date</th>
+                        <th>Status</th>
+                        <th>Fine</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="issue : ${issues}">
+                        <td th:text="${issue.book.title}" style="font-weight: 600;">Title</td>
+                        <td sec:authorize="hasRole('ADMIN')" th:text="${issue.user.name}">Student</td>
+                        <td th:text="${issue.issueDate}">2024-01-01</td>
+                        <td>
+                            <span th:text="${issue.status}" 
+                                  th:classappend="${'status-' + issue.status.name().toLowerCase()}"
+                                  style="padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600;">
+                                STATUS
+                            </span>
+                        </td>
+                        <td th:text="${'$' + issue.fine}">$0.00</td>
+                        <td>
+                            <!-- Admin Actions -->
+                            <div sec:authorize="hasRole('ADMIN')" style="display: flex; gap: 0.5rem;">
+                                <form th:if="${issue.status.name() == 'PENDING'}" th:action="@{/admin/issues/{id}/approve(id=${issue.id})}" method="post">
+                                    <button type="submit" class="btn btn-primary" style="padding: 0.3rem 0.75rem; font-size: 0.8rem; background: var(--success); border-color: var(--success);">Approve</button>
+                                </form>
+                                <form th:if="${issue.status.name() == 'PENDING'}" th:action="@{/admin/issues/{id}/reject(id=${issue.id})}" method="post">
+                                    <button type="submit" class="btn btn-primary" style="padding: 0.3rem 0.75rem; font-size: 0.8rem; background: var(--danger); border-color: var(--danger);">Reject</button>
+                                </form>
+                            </div>
+                            
+                            <!-- Student Actions -->
+                            <div sec:authorize="hasRole('STUDENT')">
+                                <span th:if="${issue.status.name() == 'PENDING'}" style="color: var(--text-muted); font-size: 0.8rem;">Awaiting Approval</span>
+                                <form th:if="${issue.status.name() == 'APPROVED'}" th:action="@{/issues/{id}/return(id=${issue.id})}" method="post">
+                                    <button type="submit" class="btn btn-outline" style="padding: 0.3rem 0.75rem; font-size: 0.8rem;">Return Book</button>
+                                </form>
+                                <span th:if="${issue.status.name() == 'RETURNED'}" th:text="${'Returned on ' + issue.returnDate}" style="font-size: 0.8rem; color: var(--success);">Date</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
+
+    <style>
+        .status-pending { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        .status-approved { background: rgba(99, 102, 241, 0.1); color: var(--primary); }
+        .status-returned { background: rgba(34, 197, 94, 0.1); color: var(--success); }
+        .status-rejected { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+    </style>
+
+    <footer>
+        <p>&copy; 2024 LuminaLibrary.</p>
+    </footer>
 </body>
 </html>

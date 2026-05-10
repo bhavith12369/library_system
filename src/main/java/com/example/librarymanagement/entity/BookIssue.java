@@ -17,6 +17,9 @@ public class BookIssue {
     private LocalDate issueDate;
     private LocalDate dueDate;
     private LocalDate returnDate;
+    public enum Status { PENDING, APPROVED, RETURNED, REJECTED }
+
+    private Status status = Status.PENDING;
     private double fine = 0.0;
 
     public BookIssue() {
@@ -84,5 +87,13 @@ public class BookIssue {
 
     public void setFine(double fine) {
         this.fine = fine;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }

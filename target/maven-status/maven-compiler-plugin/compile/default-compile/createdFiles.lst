@@ -1,0 +1,14 @@
+com\example\librarymanagement\service\CustomUserDetailsService.class
+com\example\librarymanagement\entity\BookIssue$Status.class
+com\example\librarymanagement\repository\BookIssueRepository.class
+com\example\librarymanagement\repository\BookRepository.class
+com\example\librarymanagement\repository\UserRepository.class
+com\example\librarymanagement\LibraryManagementApplication.class
+com\example\librarymanagement\entity\Book.class
+com\example\librarymanagement\controller\BookController.class
+com\example\librarymanagement\config\DataInitializer.class
+com\example\librarymanagement\config\SecurityConfig.class
+com\example\librarymanagement\entity\BookIssue.class
+com\example\librarymanagement\entity\User.class
+com\example\librarymanagement\entity\User$Role.class
+com\example\librarymanagement\service\BookService.class

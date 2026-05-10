@@ -22,10 +22,33 @@ public class BookController {
         return "login";
     }
 
+    @GetMapping("/admin/login")
+    public String adminLogin() {
+        return "admin-login";
+    }
+
+    @GetMapping("/signup")
+    public String signupForm(Model model) {
+        model.addAttribute("user", new User());
+        return "signup";
+    }
+
+    @PostMapping("/signup")
+    public String signup(@ModelAttribute User user) {
+        user.setRole(User.Role.STUDENT); // Public signup is always for students
+        bookService.saveUser(user);
+        return "redirect:/login?signupSuccess";
+    }
+
     @GetMapping("/dashboard")
-    public String dashboard(Model model) {
-        // Add user specific data
-        return "dashboard";
+    public String dashboard(java.security.Principal principal, Model model) {
+        String username = principal.getName();
+        User user = bookService.getUserByUsername(username);
+        
+        if (user != null && user.getRole() == User.Role.ADMIN) {
+            return "admin-dashboard";
+        }
+        return "student-dashboard";
     }
 
     @GetMapping("/books")
@@ -71,20 +94,53 @@ public class BookController {
     }
 
     @GetMapping("/issues")
-    public String listIssues(Model model) {
-        model.addAttribute("issues", bookService.getAllIssues());
+    public String listIssues(java.security.Principal principal, Model model) {
+        String username = principal.getName();
+        User user = bookService.getUserByUsername(username);
+        
+        List<BookIssue> issues;
+        if (user != null && user.getRole() == User.Role.ADMIN) {
+            issues = bookService.getAllIssues();
+        } else {
+            // Filter issues for student
+            issues = bookService.getAllIssues().stream()
+                    .filter(i -> i.getUser() != null && i.getUser().getName().equals(username))
+                    .toList();
+        }
+        model.addAttribute("issues", issues);
         return "issues";
     }
 
     @GetMapping("/issues/new")
-    public String newIssueForm(Model model) {
+    public String newIssueForm(@RequestParam(required = false) String bookId, Model model) {
         model.addAttribute("books", bookService.getAllBooks().stream().filter(Book::isAvailable).toList());
+        model.addAttribute("users", bookService.getAllUsers().stream().filter(u -> u.getRole() == User.Role.STUDENT).toList());
+        model.addAttribute("selectedBookId", bookId);
         return "issue-form";
     }
 
     @PostMapping("/issues")
-    public String issueBook(@RequestParam String bookId, java.security.Principal principal) {
-        bookService.issueBook(bookId, principal.getName());
+    public String issueBook(@RequestParam String bookId, @RequestParam String userId) {
+        bookService.issueBook(bookId, userId);
+        return "redirect:/issues";
+    }
+
+    @PostMapping("/issues/request")
+    public String requestBook(@RequestParam String bookId, java.security.Principal principal) {
+        User user = bookService.getUserByUsername(principal.getName());
+        bookService.requestBook(bookId, user.getId());
+        return "redirect:/issues?requested";
+    }
+
+    @PostMapping("/admin/issues/{id}/approve")
+    public String approveIssue(@PathVariable String id) {
+        bookService.approveIssue(id);
+        return "redirect:/issues";
+    }
+
+    @PostMapping("/admin/issues/{id}/reject")
+    public String rejectIssue(@PathVariable String id) {
+        bookService.rejectIssue(id);
         return "redirect:/issues";
     }
 

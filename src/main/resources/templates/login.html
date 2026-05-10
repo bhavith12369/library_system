@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Student Login | LuminaLibrary</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+</head>
+<body style="display: flex; flex-direction: column;">
+    <nav>
+        <div class="logo">LuminaLibrary <span style="font-size: 0.8rem; vertical-align: middle; padding: 0.2rem 0.5rem; background: var(--primary); color: white; border-radius: 4px; margin-left: 0.5rem;">STUDENT</span></div>
+        <ul class="nav-links">
+            <li><a th:href="@{/}">Home</a></li>
+            <li><a th:href="@{/signup}">Sign Up</a></li>
+        </ul>
+    </nav>
+
+    <div class="form-container glass animate-fade-in" style="margin-top: 10vh;">
+        <h2 style="margin-bottom: 0.5rem; text-align: center;">Student Portal</h2>
+        <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">Sign in to manage your borrowed books</p>
+        
+        <div th:if="${param.error}" style="background: rgba(239, 68, 68, 0.1); color: var(--danger); padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1.5rem; font-size: 0.875rem; text-align: center;">
+            Invalid username or password.
+        </div>
+
+        <div th:if="${param.signupSuccess}" style="background: rgba(34, 197, 94, 0.1); color: var(--success); padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1.5rem; font-size: 0.875rem; text-align: center;">
+            Account created successfully! Please sign in.
+        </div>
+        
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="username">Email or Username</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="your@email.com" required autofocus>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 1rem;">Sign In</button>
+        </form>
+        
+        <div style="margin-top: 2rem; text-align: center; font-size: 0.875rem; color: var(--text-muted);">
+            <p>Don't have an account? <a th:href="@{/signup}" style="color: var(--primary); font-weight: 600; text-decoration: none;">Register Now</a></p>
+            <p style="margin-top: 1rem;"><a th:href="@{/admin/login}" style="color: var(--text-muted); font-size: 0.75rem; text-decoration: underline;">Administrator Access</a></p>
+        </div>
+    </div>
+
+    <footer style="margin-top: auto;">
+        <p>&copy; 2024 LuminaLibrary.</p>
+    </footer>
+</body>
+</html>

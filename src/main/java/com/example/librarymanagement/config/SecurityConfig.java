@@ -4,10 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -18,8 +16,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/", "/login", "/css/**", "/js/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/", "/login", "/admin/login", "/signup", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/admin/**", "/users/**", "/books/new", "/books/edit/**", "/admin/issues/**").hasRole("ADMIN")
+                        .requestMatchers("/issues/request").authenticated()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
@@ -32,17 +31,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails admin = User.withDefaultPasswordEncoder()
-                .username("admin")
-                .password("admin")
-                .roles("ADMIN")
-                .build();
-        UserDetails student = User.withDefaultPasswordEncoder()
-                .username("student")
-                .password("student")
-                .roles("STUDENT")
-                .build();
-        return new InMemoryUserDetailsManager(admin, student);
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

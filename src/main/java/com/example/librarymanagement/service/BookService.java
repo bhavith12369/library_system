@@ -26,6 +26,9 @@ public class BookService {
     @Autowired
     private BookIssueRepository bookIssueRepository;
 
+    @Autowired
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
@@ -50,17 +53,48 @@ public class BookService {
                 .toList();
     }
 
-    public BookIssue issueBook(String bookId, String username) {
+    public BookIssue requestBook(String bookId, String userId) {
         Optional<Book> bookOpt = bookRepository.findById(bookId);
-        Optional<User> userOpt = userRepository.findByName(username);
+        Optional<User> userOpt = userRepository.findById(userId);
         if (bookOpt.isPresent() && userOpt.isPresent() && bookOpt.get().isAvailable()) {
-            Book book = bookOpt.get();
-            book.setAvailable(false);
-            bookRepository.save(book);
-            LocalDate issueDate = LocalDate.now();
-            LocalDate dueDate = issueDate.plusDays(14); // 2 weeks
-            BookIssue issue = new BookIssue(book, userOpt.get(), issueDate, dueDate);
-            return bookIssueRepository.save(issue);
+            BookIssue request = new BookIssue(bookOpt.get(), userOpt.get(), LocalDate.now(), LocalDate.now().plusDays(14));
+            request.setStatus(BookIssue.Status.PENDING);
+            return bookIssueRepository.save(request);
+        }
+        return null;
+    }
+
+    public BookIssue approveIssue(String issueId) {
+        Optional<BookIssue> issueOpt = bookIssueRepository.findById(issueId);
+        if (issueOpt.isPresent()) {
+            BookIssue issue = issueOpt.get();
+            if (issue.getStatus() == BookIssue.Status.PENDING) {
+                issue.setStatus(BookIssue.Status.APPROVED);
+                issue.getBook().setAvailable(false);
+                bookRepository.save(issue.getBook());
+                return bookIssueRepository.save(issue);
+            }
+        }
+        return null;
+    }
+
+    public BookIssue rejectIssue(String issueId) {
+        Optional<BookIssue> issueOpt = bookIssueRepository.findById(issueId);
+        if (issueOpt.isPresent()) {
+            BookIssue issue = issueOpt.get();
+            if (issue.getStatus() == BookIssue.Status.PENDING) {
+                issue.setStatus(BookIssue.Status.REJECTED);
+                return bookIssueRepository.save(issue);
+            }
+        }
+        return null;
+    }
+
+    public BookIssue issueBook(String bookId, String userId) {
+        // Direct issuance by Admin
+        BookIssue issue = requestBook(bookId, userId);
+        if (issue != null) {
+            return approveIssue(issue.getId());
         }
         return null;
     }
@@ -70,6 +104,7 @@ public class BookService {
         if (issueOpt.isPresent()) {
             BookIssue issue = issueOpt.get();
             issue.setReturnDate(LocalDate.now());
+            issue.setStatus(BookIssue.Status.RETURNED);
             double fine = calculateFine(issue);
             issue.setFine(fine);
             issue.getBook().setAvailable(true);
@@ -95,11 +130,13 @@ public class BookService {
         return userRepository.findAll();
     }
 
+    public User getUserByUsername(String username) {
+        return userRepository.findByNameOrEmail(username, username).orElse(null);
+    }
+
     public User saveUser(User user) {
-        // Encode password if not encoded
         if (user.getPassword() != null && !user.getPassword().startsWith("$2a$")) {
-            // Simple encoding, in real app use BCrypt
-            user.setPassword("{noop}" + user.getPassword()); // For demo, use noop
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         return userRepository.save(user);
     }

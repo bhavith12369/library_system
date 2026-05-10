@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Student Dashboard | LuminaLibrary</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+</head>
+<body>
+    <nav>
+        <div class="logo">LuminaLibrary <span style="font-size: 0.7rem; background: var(--primary); color: white; padding: 0.1rem 0.4rem; border-radius: 4px; margin-left: 0.5rem;">STUDENT</span></div>
+        <ul class="nav-links">
+            <li><a th:href="@{/dashboard}">Dashboard</a></li>
+            <li><a th:href="@{/books}">Browse Books</a></li>
+            <li><a th:href="@{/issues}">My Issues</a></li>
+            <li>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-outline" style="padding: 0.4rem 1rem; font-size: 0.8rem;">Logout</button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+
+    <div style="padding: 3rem 5%;">
+        <div class="animate-fade-in">
+            <h1>Welcome back, <span sec:authentication="name" style="color: var(--primary)">Student</span></h1>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">Your personalized library workspace.</p>
+        </div>
+
+        <div class="grid" style="margin-top: 3rem; padding: 0;">
+            <!-- Borrowing Stats -->
+            <div class="card glass">
+                <h3>Your Activity</h3>
+                <div style="display: flex; justify-content: space-between; margin-top: 1rem;">
+                    <div>
+                        <p style="font-size: 2rem; font-weight: 800; color: var(--primary);">0</p>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">Books Borrowed</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 2rem; font-weight: 800; color: var(--secondary);">$0.00</p>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">Current Fines</p>
+                    </div>
+                </div>
+                <a th:href="@{/issues}" class="btn btn-outline" style="margin-top: 1.5rem; width: 100%; text-align: center;">View All Issues</a>
+            </div>
+
+            <!-- Discovery -->
+            <div class="card glass">
+                <h3>Discover Books</h3>
+                <p>Explore our catalog and find your next read.</p>
+                <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <a th:href="@{/books}" class="btn btn-primary" style="text-align: center;">Search Catalog</a>
+                </div>
+            </div>
+
+            <!-- Help/Info -->
+            <div class="card glass">
+                <h3>Library Policy</h3>
+                <p style="font-size: 0.875rem; color: var(--text-muted);">
+                    - Books can be borrowed for 14 days.<br>
+                    - Overdue fine is $0.50 per day.<br>
+                    - Maximum 5 books at a time.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 LuminaLibrary Student Portal.</p>
+    </footer>
+</body>
+</html>

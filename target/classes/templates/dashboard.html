@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Dashboard | LuminaLibrary</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+</head>
+<body>
+    <nav>
+        <div class="logo">LuminaLibrary</div>
+        <ul class="nav-links">
+            <li><a th:href="@{/dashboard}">Dashboard</a></li>
+            <li><a th:href="@{/books}">Books</a></li>
+            <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/users}">Students</a></li>
+            <li><a th:href="@{/issues}">Issues</a></li>
+            <li>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-outline" style="padding: 0.4rem 1rem; font-size: 0.8rem;">Logout</button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+
+    <div style="padding: 3rem 5%;">
+        <div class="animate-fade-in">
+            <h1>Welcome, <span sec:authentication="name" style="color: var(--primary)">User</span></h1>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">Access your library management tools below.</p>
+        </div>
+
+        <div class="grid" style="margin-top: 3rem; padding: 0;">
+            <!-- Admin Section -->
+            <div sec:authorize="hasRole('ADMIN')" class="card glass">
+                <h3 style="color: var(--secondary)">Admin Panel</h3>
+                <p>Manage the entire library ecosystem from here.</p>
+                <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <a th:href="@{/books/new}" class="btn btn-primary" style="text-align: center;">Add New Book</a>
+                    <a th:href="@{/users/new}" class="btn btn-outline" style="text-align: center;">Register New Student</a>
+                    <a th:href="@{/users}" class="btn btn-outline" style="text-align: center;">Manage Student Data</a>
+                </div>
+            </div>
+
+            <!-- Global Actions -->
+            <div class="card glass">
+                <h3>Quick Actions</h3>
+                <p>Frequent tasks you might need to perform.</p>
+                <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <a th:href="@{/books}" class="btn btn-outline" style="text-align: center;">Browse All Books</a>
+                    <a th:href="@{/issues/new}" class="btn btn-primary" style="text-align: center;">Issue a Book</a>
+                </div>
+            </div>
+
+            <!-- Stats Placeholder -->
+            <div class="card glass">
+                <h3>Library Stats</h3>
+                <div style="display: flex; justify-content: space-between; margin-top: 1rem;">
+                    <div>
+                        <p style="font-size: 2rem; font-weight: 800; color: var(--primary);">24</p>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">Active Issues</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 2rem; font-weight: 800; color: var(--secondary);">156</p>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">Total Books</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 LuminaLibrary.</p>
+    </footer>
+</body>
+</html>
